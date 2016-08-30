@@ -24,7 +24,6 @@ tools:context="com.adori.personlistsample.PersonDetailFragment">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Date of birth"
         android:gravity="center_vertical"
         style="@style/TextAppearance.AppCompat.Large"
         android:id="@+id/dob_text_view"
@@ -49,7 +48,6 @@ tools:context="com.adori.personlistsample.PersonDetailFragment">
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="20dp"
-        android:text="ZIP code"
         android:gravity="center_vertical"
         style="@style/TextAppearance.AppCompat.Large"
         android:id="@+id/zip_code_text_view"

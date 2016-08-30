@@ -26,7 +26,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="First name"
+            android:hint="@string/first_name_hint"
             android:id="@+id/first_name"
             android:layout_marginEnd="20dp"/>
 
@@ -40,7 +40,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="Last name"
+            android:hint="@string/last_name_hint"
             android:id="@+id/last_name"
             android:layout_marginStart="50dp"
             android:layout_marginEnd="20dp"/>
@@ -62,7 +62,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="Date of birth"
+            android:hint="@string/date_of_birth_hint"
             android:inputType="date"
             android:id="@+id/dob"
             android:layout_marginEnd="20dp"/>
@@ -84,7 +84,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="ZIP code"
+            android:hint="@string/zip_code_hint"
             android:inputType="numberDecimal"
             android:id="@+id/zip_code"
             android:layout_marginEnd="20dp"/>

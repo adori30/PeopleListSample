@@ -24,6 +24,8 @@ import java.util.List;
  * you like and this class will handle updating the list as the data changes.
  *
  * @param <T> The class type to use as a model for the data contained in the children of the given Firebase location
+ *
+ * Modified by adria.navarro
  */
 public abstract class FirebaseListAdapter<VH extends RecyclerView.ViewHolder, T> extends RecyclerView.Adapter<VH> {
 
@@ -149,11 +151,6 @@ public abstract class FirebaseListAdapter<VH extends RecyclerView.ViewHolder, T>
     public int getItemCount() {
         return mModels.size();
     }
-/*
-    public int getCount() {
-        return mModels.size();
-    }
-*/
 
     public Object getItem(int i) {
         return mModels.get(i);
@@ -163,19 +160,6 @@ public abstract class FirebaseListAdapter<VH extends RecyclerView.ViewHolder, T>
     public long getItemId(int i) {
         return i;
     }
-
-    /*
-    public View getView(int i, View view, ViewGroup viewGroup) {
-        if (view == null) {
-            view = mInflater.inflate(mLayout, viewGroup, false);
-        }
-
-        T model = mModels.get(i);
-        // Call out to subclass to marshall this model into the provided view
-        populateView(view, model);
-        return view;
-    }
-*/
     @Override
     public void onBindViewHolder(VH holder, int position) {
         T model = mModels.get(position);

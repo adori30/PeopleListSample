@@ -12,14 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.adori.personlistsample.dummy.DummyContent;
-
-/**
- * A fragment representing a single Person detail screen.
- * This fragment is either contained in a {@link PersonListActivity}
- * in two-pane mode (on tablets) or a {@link PersonDetailActivity}
- * on handsets.
- */
 public class PersonDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     /**
      * The fragment argument representing the item ID that this fragment
@@ -88,8 +80,10 @@ public class PersonDetailFragment extends Fragment implements LoaderManager.Load
             appBarLayout.setTitle(person.firstName + " " + person.lastName);
         }
 
-        mDobView.setText(mPerson.dob);
-        mZipCodeView.setText(String.valueOf(mPerson.zipCode));
+        mDobView.setText(person.dob);
+        mZipCodeView.setText(String.valueOf(person.zipCode));
+
+        mPerson = person;
     }
 
     @Override

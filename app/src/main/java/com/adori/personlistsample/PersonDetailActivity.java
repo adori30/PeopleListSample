@@ -3,25 +3,15 @@ package com.adori.personlistsample;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.View;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.adori.personlistsample.util.ConfirmationDialog;
 
-/**
- * An activity representing a single Person detail screen. This
- * activity is only used narrow width devices. On tablet-size devices,
- * item details are presented side-by-side with a list of items
- * in a {@link PersonListActivity}.
- */
 public class PersonDetailActivity extends AppCompatActivity implements ConfirmationDialog.Listener {
 
     public static final int EDIT_CODE = 1;
@@ -120,9 +110,9 @@ public class PersonDetailActivity extends AppCompatActivity implements Confirmat
                 navigateUpTo(new Intent(this, PersonListActivity.class));
                 return true;
             case R.id.action_delete:
-                ConfirmationDialog.newInstance("Delete person",
-                        "Are you sure you want to delete this person?",
-                        "Delete", "Cancel").show(getSupportFragmentManager(), DIALOG_TAG);
+                ConfirmationDialog.newInstance(getString(R.string.dialog_delete_single_title),
+                        getString(R.string.dialog_delete_single_message),
+                        getString(R.string.dialog_delete_ok_button), getString(R.string.dialog_delete_cancel_button)).show(getSupportFragmentManager(), DIALOG_TAG);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -130,7 +120,7 @@ public class PersonDetailActivity extends AppCompatActivity implements Confirmat
 
     @Override
     public void onPositiveClick(ConfirmationDialog dialog) {
-        PersonsFirebaseDatabase database = PersonsFirebaseDatabase.getInstance();
+        PersonsDatabase database = PersonsFirebaseDatabase.getInstance();
         database.deletePerson(mPersonKey);
         finish();
     }

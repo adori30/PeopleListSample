@@ -5,11 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,35 +17,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-
-import com.adori.personlistsample.dummy.DummyContent;
+import com.adori.personlistsample.util.ConfirmationDialog;
 import com.firebase.client.Firebase;
 import com.firebase.client.Query;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-/**
- * An activity representing a list of Persons. This activity
- * has different presentations for handset and tablet-size devices. On
- * handsets, the activity presents a list of items, which when touched,
- * lead to a {@link PersonDetailActivity} representing
- * item details. On tablets, the activity presents the list of items and
- * item details side-by-side using two vertical panes.
- */
-public class PersonListActivity extends AppCompatActivity {
+public class PersonListActivity extends AppCompatActivity implements ConfirmationDialog.Listener{
 
     private static final String FIREBASE_URL = "https://personlistsample.firebaseio.com/";
+    private static final String DIALOG_TAG = "dialog-tag";
 
-    /**
-     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
-     * device.
-     */
-    private boolean mTwoPane;
-
-    private List<String> mSelectedKeys;
+    private ArrayList<String> mSelectedKeys;
     private List<View> mSelectedViews;
 
     private boolean mDeleteMode = false;
@@ -53,7 +37,6 @@ public class PersonListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Firebase.setAndroidContext(getApplicationContext());
 
         setContentView(R.layout.activity_person_list);
 
@@ -76,17 +59,22 @@ public class PersonListActivity extends AppCompatActivity {
         mSelectedKeys = new ArrayList<>();
         mSelectedViews = new ArrayList<>();
 
-        if (findViewById(R.id.person_detail_container) != null) {
-            // The detail container view will be present only in the
-            // large-screen layouts (res/values-w900dp).
-            // If this view is present, then the
-            // activity should be in two-pane mode.
-            mTwoPane = true;
+        if (savedInstanceState != null) {
+            mDeleteMode = savedInstanceState.getBoolean("mDeleteMode");
+            mSelectedKeys = savedInstanceState.getStringArrayList("mSelectedKeys");
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean("mDeleteMode", mDeleteMode);
+        outState.putStringArrayList("mSelectedKeys", mSelectedKeys);
+        super.onSaveInstanceState(outState);
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         Firebase firebase = new Firebase(FIREBASE_URL).child("persons");
+        firebase.keepSynced(true);
         PersonListAdapter adapter = new PersonListAdapter(firebase.limitToFirst(50), Person.class,
                 R.layout.person_list_content, this);
         recyclerView.setAdapter(adapter);
@@ -106,15 +94,27 @@ public class PersonListActivity extends AppCompatActivity {
                 switchDeleteMode(false);
                 return true;
             case R.id.action_delete_bulk:
-                for (String key : mSelectedKeys) {
-                    PersonsFirebaseDatabase database = PersonsFirebaseDatabase.getInstance();
-                    database.deletePerson(key);
-                }
-                switchDeleteMode(false);
+                ConfirmationDialog.newInstance(getString(R.string.dialog_delete_bulk_title),
+                        getString(R.string.dialog_delete_bulk_message),
+                        getString(R.string.dialog_delete_bulk_ok_button), getString(R.string.dialog_delete_bulk_cancel_button)).show(getSupportFragmentManager(), DIALOG_TAG);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onPositiveClick(ConfirmationDialog dialog) {
+        for (String key : mSelectedKeys) {
+            PersonsDatabase database = PersonsFirebaseDatabase.getInstance();
+            database.deletePerson(key);
+        }
+        switchDeleteMode(false);
+    }
+
+    @Override
+    public void onNegativeClick(ConfirmationDialog dialog) {
+        dialog.dismiss();
     }
 
     @Override
@@ -164,6 +164,9 @@ public class PersonListActivity extends AppCompatActivity {
                 v.setAlpha(0);
                 mSelectedKeys.remove(key);
                 mSelectedViews.remove(v);
+                if (mSelectedKeys.size() == 0) {
+                    switchDeleteMode(false);
+                }
             } else {
                 v.setAlpha(1);
                 mSelectedKeys.add(key);
@@ -176,6 +179,12 @@ public class PersonListActivity extends AppCompatActivity {
             holder.mPerson = model;
             String fullName = model.firstName + " " + model.lastName;
             holder.mNameView.setText(fullName);
+
+            if (mSelectedKeys.contains(key)) {
+                View checkView = holder.mView.findViewById(R.id.select_image);
+                checkView.setAlpha(1);
+            }
+
             holder.mView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
@@ -204,21 +213,6 @@ public class PersonListActivity extends AppCompatActivity {
 
                         context.startActivity(intent);
                     }
-                   /* if (mTwoPane) {
-                        Bundle arguments = new Bundle();
-                        arguments.putString(PersonDetailFragment.ARG_ITEM_ID, holder.mItem.id);
-                        PersonDetailFragment fragment = new PersonDetailFragment();
-                        fragment.setArguments(arguments);
-                        getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.person_detail_container, fragment)
-                                .commit();
-                    } else {
-                        Context context = view.getContext();
-                        Intent intent = new Intent(context, PersonDetailActivity.class);
-                        intent.putExtra(PersonDetailFragment.ARG_ITEM_ID, holder.mItem.id);
-
-                        context.startActivity(intent);
-                    }*/
                 }
             });
         }
@@ -229,32 +223,6 @@ public class PersonListActivity extends AppCompatActivity {
                     .inflate(R.layout.person_list_content, parent, false);
             return new PersonsViewHolder(view);
         }
-
-    /*
-    * holder.mItem = mValues.get(position);
-            holder.mIdView.setText(mValues.get(position).id);
-            holder.mContentView.setText(mValues.get(position).content);
-
-            holder.mView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mTwoPane) {
-                        Bundle arguments = new Bundle();
-                        arguments.putString(PersonDetailFragment.ARG_ITEM_ID, holder.mItem.id);
-                        PersonDetailFragment fragment = new PersonDetailFragment();
-                        fragment.setArguments(arguments);
-                        getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.person_detail_container, fragment)
-                                .commit();
-                    } else {
-                        Context context = v.getContext();
-                        Intent intent = new Intent(context, PersonDetailActivity.class);
-                        intent.putExtra(PersonDetailFragment.ARG_ITEM_ID, holder.mItem.id);
-
-                        context.startActivity(intent);
-                    }
-                }
-            });*/
 
         public class PersonsViewHolder extends RecyclerView.ViewHolder {
 

@@ -12,7 +12,7 @@ public class PersonsFirebaseDatabase implements PersonsDatabase {
 
     private DatabaseReference mDatabase;
 
-    public static PersonsFirebaseDatabase getInstance() {
+    public static PersonsDatabase getInstance() {
         if (mInstance != null) {
             return mInstance;
         }
@@ -22,6 +22,7 @@ public class PersonsFirebaseDatabase implements PersonsDatabase {
 
     private PersonsFirebaseDatabase() {
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.child("persons").keepSynced(true);
     }
 
     @Override

@@ -3,11 +3,10 @@ package com.adori.personlistsample;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
-import android.support.design.widget.Snackbar;
+import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -118,7 +117,7 @@ public class PersonEditActivity extends AppCompatActivity {
                         .toString().equals("") ||
                 mZipCode.getText()
                         .toString().equals("")) {
-            Toast.makeText(getApplicationContext(), "Fields cannot be empty", Toast.LENGTH_SHORT)
+            Toast.makeText(getApplicationContext(), R.string.toast_fields_not_empty_text, Toast.LENGTH_SHORT)
                     .show();
             return true;
         }
@@ -133,7 +132,7 @@ public class PersonEditActivity extends AppCompatActivity {
                 mDob.getText().toString(),
                 Integer.valueOf(mZipCode.getText().toString()));
 
-        PersonsFirebaseDatabase db = PersonsFirebaseDatabase.getInstance();
+        PersonsDatabase db = PersonsFirebaseDatabase.getInstance();
         if (mKey != null) {
             db.editPerson(mKey, person);
             Intent intent = new Intent();

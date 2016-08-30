@@ -3,4 +3,17 @@
     <string name="action_settings">Settings</string>
     <string name="title_person_list">People List</string>
     <string name="title_person_detail">Person Detail</string>
+    <string name="first_name_hint">First name</string>
+    <string name="last_name_hint">Last name</string>
+    <string name="date_of_birth_hint">Date of birth</string>
+    <string name="zip_code_hint">ZIP code</string>
+    <string name="dialog_delete_single_title">Delete person</string>
+    <string name="dialog_delete_single_message">Are you sure you want to delete this person?</string>
+    <string name="dialog_delete_ok_button">Delete</string>
+    <string name="dialog_delete_cancel_button">Cancel</string>
+    <string name="toast_fields_not_empty_text">Fields cannot be empty</string>
+    <string name="dialog_delete_bulk_title">Delete selected</string>
+    <string name="dialog_delete_bulk_message">Are you sure you want to delete the selected people?</string>
+    <string name="dialog_delete_bulk_ok_button">Delete</string>
+    <string name="dialog_delete_bulk_cancel_button">Cancel</string>
 </resources>
