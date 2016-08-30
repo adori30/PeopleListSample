@@ -62,6 +62,12 @@ public class PersonListActivity extends AppCompatActivity implements Confirmatio
         if (savedInstanceState != null) {
             mDeleteMode = savedInstanceState.getBoolean("mDeleteMode");
             mSelectedKeys = savedInstanceState.getStringArrayList("mSelectedKeys");
+            if (mDeleteMode) {
+                ActionBar actionBar = getSupportActionBar();
+                if (actionBar != null) {
+                    actionBar.setDisplayHomeAsUpEnabled(true);
+                }
+            }
         }
     }
 
@@ -183,6 +189,7 @@ public class PersonListActivity extends AppCompatActivity implements Confirmatio
             if (mSelectedKeys.contains(key)) {
                 View checkView = holder.mView.findViewById(R.id.select_image);
                 checkView.setAlpha(1);
+                mSelectedViews.add(checkView);
             }
 
             holder.mView.setOnLongClickListener(new View.OnLongClickListener() {
