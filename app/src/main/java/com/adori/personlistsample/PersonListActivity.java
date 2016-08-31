@@ -1,8 +1,10 @@
 package com.adori.personlistsample;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -33,6 +35,7 @@ public class PersonListActivity extends AppCompatActivity implements Confirmatio
     private List<View> mSelectedViews;
 
     private boolean mDeleteMode = false;
+    private RecyclerView mRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +55,15 @@ public class PersonListActivity extends AppCompatActivity implements Confirmatio
             }
         });
 
-        View recyclerView = findViewById(R.id.person_list);
-        assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView);
+        mRecyclerView = (RecyclerView) findViewById(R.id.person_list);
+        assert mRecyclerView != null;
+        setupRecyclerView(mRecyclerView);
+
+        if (mRecyclerView.getAdapter().getItemCount() == 0) {
+            findViewById(R.id.empty_list_hint).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.empty_list_hint).setVisibility(View.GONE);
+        }
 
         mSelectedKeys = new ArrayList<>();
         mSelectedViews = new ArrayList<>();
@@ -79,16 +88,26 @@ public class PersonListActivity extends AppCompatActivity implements Confirmatio
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        Firebase firebase = new Firebase(FIREBASE_URL).child("persons");
+        Firebase firebase = new Firebase(FIREBASE_URL).child("persons")
+                .child(BaseApplication.getSessionKey());
         firebase.keepSynced(true);
         PersonListAdapter adapter = new PersonListAdapter(firebase.limitToFirst(50), Person.class,
                 R.layout.person_list_content, this);
+        adapter.setOnDataChangeListener(new FirebaseListAdapter.OnDataChangeListener() {
+            @Override
+            public void onDataChanged(int size) {
+                if (size == 0) {
+                    findViewById(R.id.empty_list_hint).setVisibility(View.VISIBLE);
+                } else {
+                    findViewById(R.id.empty_list_hint).setVisibility(View.GONE);
+                }
+            }
+        });
         recyclerView.setAdapter(adapter);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_list, menu);
         return true;
     }

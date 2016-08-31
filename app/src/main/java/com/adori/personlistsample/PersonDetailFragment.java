@@ -13,20 +13,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 public class PersonDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
-    /**
-     * The fragment argument representing the item ID that this fragment
-     * represents.
-     */
-    public static final String ARG_ITEM_ID = "item_id";
+
     public static final String ARG_FIRST_NAME = "first_name";
     public static final String ARG_LAST_NAME = "last_name";
     public static final String ARG_DOB = "dob";
     public static final String ARG_ZIP_CODE = "zip_code";
     public static final String ARG_KEY = "key";
 
-    /**
-     * The dummy content this fragment is presenting.
-     */
     private String mKey;
     private Person mPerson;
     private TextView mDobView;
@@ -44,9 +37,6 @@ public class PersonDetailFragment extends Fragment implements LoaderManager.Load
         super.onCreate(savedInstanceState);
 
         if (getArguments().containsKey(ARG_KEY)) {
-            // Load the dummy content specified by the fragment
-            // arguments. In a real-world scenario, use a Loader
-            // to load content from a content provider.
             mKey = getArguments().getString(ARG_KEY);
             String firstName = getArguments().getString(ARG_FIRST_NAME);
             String lastName = getArguments().getString(ARG_LAST_NAME);

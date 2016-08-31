@@ -29,6 +29,12 @@ import java.util.List;
  */
 public abstract class FirebaseListAdapter<VH extends RecyclerView.ViewHolder, T> extends RecyclerView.Adapter<VH> {
 
+    public interface OnDataChangeListener {
+        public void onDataChanged(int size);
+    }
+
+    private OnDataChangeListener mOnDataChangeListener;
+
     private Query mRef;
     private Class<T> mModelClass;
     private int mLayout;
@@ -77,6 +83,9 @@ public abstract class FirebaseListAdapter<VH extends RecyclerView.ViewHolder, T>
                     }
                 }
 
+                if (mOnDataChangeListener != null) {
+                    mOnDataChangeListener.onDataChanged(getItemCount());
+                }
                 notifyDataSetChanged();
             }
 
@@ -89,6 +98,9 @@ public abstract class FirebaseListAdapter<VH extends RecyclerView.ViewHolder, T>
 
                 mModels.set(index, newModel);
 
+                if (mOnDataChangeListener != null) {
+                    mOnDataChangeListener.onDataChanged(getItemCount());
+                }
                 notifyDataSetChanged();
             }
 
@@ -102,6 +114,9 @@ public abstract class FirebaseListAdapter<VH extends RecyclerView.ViewHolder, T>
                 mKeys.remove(index);
                 mModels.remove(index);
 
+                if (mOnDataChangeListener != null) {
+                    mOnDataChangeListener.onDataChanged(getItemCount());
+                }
                 notifyDataSetChanged();
             }
 
@@ -128,6 +143,10 @@ public abstract class FirebaseListAdapter<VH extends RecyclerView.ViewHolder, T>
                         mKeys.add(nextIndex, key);
                     }
                 }
+
+                if (mOnDataChangeListener != null) {
+                    mOnDataChangeListener.onDataChanged(getItemCount());
+                }
                 notifyDataSetChanged();
             }
 
@@ -150,6 +169,10 @@ public abstract class FirebaseListAdapter<VH extends RecyclerView.ViewHolder, T>
     @Override
     public int getItemCount() {
         return mModels.size();
+    }
+
+    public void setOnDataChangeListener(OnDataChangeListener listener) {
+        mOnDataChangeListener = listener;
     }
 
     public Object getItem(int i) {

@@ -1,7 +1,9 @@
 package com.adori.personlistsample;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.adori.personlistsample.util.ConfirmationDialog;
 
@@ -49,15 +52,6 @@ public class PersonDetailActivity extends AppCompatActivity implements Confirmat
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        // savedInstanceState is non-null when there is fragment state
-        // saved from previous configurations of this activity
-        // (e.g. when rotating the screen from portrait to landscape).
-        // In this case, the fragment will automatically be re-added
-        // to its container so we don't need to manually add it.
-        // For more information, see the Fragments API guide at:
-        //
-        // http://developer.android.com/guide/components/fragments.html
-        //
         if (savedInstanceState == null) {
             Intent intent = getIntent();
             mPersonKey = intent.getStringExtra(PersonDetailFragment.ARG_KEY);
@@ -122,33 +116,24 @@ public class PersonDetailActivity extends AppCompatActivity implements Confirmat
     public void onPositiveClick(ConfirmationDialog dialog) {
         PersonsDatabase database = PersonsFirebaseDatabase.getInstance();
         database.deletePerson(mPersonKey);
+        displayDeleteHintToast();
         finish();
+    }
+
+    private void displayDeleteHintToast() {
+        SharedPreferences preferences = PreferenceManager
+                .getDefaultSharedPreferences(BaseApplication.getAppContext());
+        if (!preferences.getBoolean("delete_hint_showed", false)) {
+            Toast.makeText(BaseApplication.getAppContext(),
+                    R.string.delete_several_hint_toast, Toast.LENGTH_LONG).show();
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean("delete_hint_showed", true);
+            editor.apply();
+        }
     }
 
     @Override
     public void onNegativeClick(ConfirmationDialog dialog) {
         dialog.dismiss();
-    }
-
-    private void updateData(Intent intent) {
-        mPersonKey = intent.getStringExtra(PersonDetailFragment.ARG_KEY);
-        String firstName = intent.getStringExtra(PersonDetailFragment.ARG_FIRST_NAME);
-        String lastName = intent.getStringExtra(PersonDetailFragment.ARG_LAST_NAME);
-        String dob = intent.getStringExtra(PersonDetailFragment.ARG_DOB);
-        int zipCode = intent.getIntExtra(PersonDetailFragment.ARG_ZIP_CODE, 0);
-        mPerson = new Person(firstName, lastName, dob, zipCode);
-
-        Bundle arguments = new Bundle();
-        arguments.putString(PersonDetailFragment.ARG_KEY,
-                mPersonKey);
-        arguments.putString(PersonDetailFragment.ARG_FIRST_NAME, firstName);
-        arguments.putString(PersonDetailFragment.ARG_LAST_NAME, lastName);
-        arguments.putString(PersonDetailFragment.ARG_DOB, dob);
-        arguments.putInt(PersonDetailFragment.ARG_ZIP_CODE, zipCode);
-        PersonDetailFragment fragment = new PersonDetailFragment();
-        fragment.setArguments(arguments);
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.person_detail_container, fragment, FRAGMENT_TAG)
-                .commitAllowingStateLoss();
     }
 }

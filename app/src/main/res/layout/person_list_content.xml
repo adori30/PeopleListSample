@@ -13,7 +13,7 @@
         android:layout_marginStart="20dp"
         android:alpha="0"
         android:id="@+id/select_image"
-        android:tint="@android:color/background_dark"/>
+        android:tint="@color/colorAccent"/>
 
     <TextView
         android:id="@+id/content"

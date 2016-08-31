@@ -16,4 +16,6 @@
     <string name="dialog_delete_bulk_message">Are you sure you want to delete the selected people?</string>
     <string name="dialog_delete_bulk_ok_button">Delete</string>
     <string name="dialog_delete_bulk_cancel_button">Cancel</string>
+    <string name="empty_list_hint">Your list is empty. Add some people by clicking the floating button</string>
+    <string name="delete_several_hint_toast">Delete several people by long tapping on list</string>
 </resources>
